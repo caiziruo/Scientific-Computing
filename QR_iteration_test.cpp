@@ -13,21 +13,29 @@ using namespace std;
 
 
 int main() {
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     int n = 9;
     Matrix A(n, n);
     // A.Generate_Nonsingular();
-    // A.Generate_Positive_Definite();
-    A.Generate_Diagonally_Dominant();
+    A.Generate_Positive_Definite();
+    // A.Generate_Diagonally_Dominant();
 
+    // A.Print_matrix();
+    // cout << '\n'; 
 
+    Eigenvalue eigenvalues_computation(A);
 
-    Eigenvalue eigenvalues_computation(A, 9, 9);
-    eigenvalues_computation.QR_iteration(1000);
+    eigenvalues_computation.Get_eigenvalues("QR_iteration", false);
+    // cout << "Eigenvalues:\n";
+    // eigenvalues_computation.Print_eigenvalues();
+    // cout << "\nEigenvectors:\n";
+    // eigenvalues_computation.Print_eigenvectors();
 
-    cout << "Eigenvalues:\n";
-    eigenvalues_computation.Print_eigenvalues();
-    cout << "\nEigenvectors:\n";
-    eigenvalues_computation.Print_eigenvectors();
+    eigenvalues_computation.Get_eigenvalues("QR_iteration", true, "Arnoldi");
+
+    // cout << "Eigenvalues:\n";
+    // eigenvalues_computation.Print_eigenvalues();
+    // cout << "\nEigenvectors:\n";
+    // eigenvalues_computation.Print_eigenvectors();
 
 }

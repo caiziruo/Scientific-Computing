@@ -36,6 +36,9 @@ public:
         matrix = new double * [row_dimension];
         for (int i = 0; i < row_dimension; i++) {
             matrix[i] = new double[column_dimension];
+            for (int j = 0; j < column_dimension; j++) {
+                matrix[i][j] = 0;
+            }
         }
         
         factorization_L = NULL;
@@ -82,7 +85,9 @@ public:
         factorization_R = NULL;
     }
     
-    void Set_Element(int i, int j, double x) {matrix[i][j] = x;}
+    void Set_element(int i, int j, double x) {matrix[i][j] = x;}
+    void Set_column(int j, Matrix const & B);
+    void Set_row(int i, Matrix const & B);
     // double Matrix_element(int i, int j) const {return matrix[i][j]; }
     // int Matrix_row_dimension() const {return row_dimension;}
     // int Matrix_column_dimension() const {return column_dimension;}
@@ -106,6 +111,8 @@ public:
     void LU_factorization(bool use_pivoting = true);
     void QR_factorization(bool use_pivoting = true);
     Matrix Transpose() const;
+    Matrix column_matrix(int j);
+    Matrix row_matrix(int i);
     Matrix inverse_upper_triangular(); 
     Matrix LU_factorization_L();
     Matrix LU_factorization_U();
@@ -217,6 +224,18 @@ double Matrix::Frobenius_norm() const {
     return norm;
 }
 
+void Matrix::Set_column(int j, Matrix const & B) {
+    for (int i = 0; i < row_dimension; ++i) {
+        matrix[i][j] = B.matrix[i][0];
+    }
+} 
+
+void Matrix::Set_row(int i, Matrix const & B) {
+    for (int j = 0; j < column_dimension; ++j) {
+        matrix[i][j] = B.matrix[0][j];
+    }
+}
+
 void Matrix::Interchange_row(int m, int n) {
     if (m == n) return;
     double tmp;
@@ -236,7 +255,6 @@ void Matrix::Print_Permutation() const {
         }
     }
 }
-
 
 void Matrix::Print_matrix() const {
     for (int i = 0; i < row_dimension; i++) {
@@ -318,6 +336,26 @@ void Matrix::Generate_Diagonally_Dominant() {
             else matrix[i][j] = 1;
         }
     }
+}
+
+Matrix Matrix::column_matrix(int j) {
+    Matrix tmp(row_dimension, 1);
+    
+    for (int i = 0; i < row_dimension; i++) {
+        tmp.matrix[i][0] = matrix[i][j];
+    }
+    
+    return tmp;
+} 
+
+Matrix Matrix::row_matrix(int i) {
+    Matrix tmp(row_dimension, 1);
+    
+    for (int j = 0; j < column_dimension; j++) {
+        tmp.matrix[0][j] = matrix[i][j];
+    }
+    
+    return tmp;
 }
 
 Matrix Matrix::inverse_upper_triangular() {

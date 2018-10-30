@@ -89,6 +89,7 @@ public:
     
     void Interchange_row(int m, int n);
     
+    void Matrix_approximation(double epsilon);
     void Generate_Identity();
     void Generate_Random();
     void Generate_Nonsingular();
@@ -102,8 +103,8 @@ public:
     void Print_L() const;
     void Print_U() const;
 
-    void LU_factorization(bool use_pivoting);
-    void QR_factorization(bool use_pivoting);
+    void LU_factorization(bool use_pivoting = true);
+    void QR_factorization(bool use_pivoting = true);
     Matrix Transpose() const;
     Matrix inverse_upper_triangular(); 
     Matrix LU_factorization_L();
@@ -149,7 +150,7 @@ public:
         return tmp;
     }
     
-    Matrix operator*(double scalar) {
+    Matrix operator*(double scalar) { // matrix * scalar
         Matrix tmp(row_dimension, column_dimension);
         
         for (int i = 0; i < row_dimension; i++) {
@@ -261,6 +262,14 @@ void Matrix::Print_U() const {
             cout << setw(14) <<  factorization_U[i][j];
         }
         cout << '\n';
+    }
+}
+
+void Matrix::Matrix_approximation(double epsilon = 1e-10) {
+    for (int i = 0; i < row_dimension; i++) {
+        for (int j = 0; j < column_dimension; j++) {
+            if (abs(matrix[i][j]) < epsilon) {matrix[i][j] = 0; }
+        }
     }
 }
 

@@ -369,9 +369,9 @@ Matrix Matrix::QR_factorization_Q() {
 }
 
 Matrix Matrix::QR_factorization_R() {
-    Matrix tmp(row_dimension, column_dimension);
+    Matrix tmp(column_dimension, column_dimension);
     
-    for (int i = 0; i < row_dimension; i++) {
+    for (int i = 0; i < column_dimension; i++) {
         for (int j = 0; j < column_dimension; j++) {
             tmp.matrix[i][j] = factorization_R[i][j];
         }

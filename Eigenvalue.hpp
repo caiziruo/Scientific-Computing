@@ -39,9 +39,9 @@ public:
 		else {dimension = matrix_A.row_dimension; }
 
 		original_A = new Matrix(matrix_A);
-		eigenvalues = new Matrix(dimension, 1);
-		eigenvectors = new Matrix(dimension, dimension);
 
+		eigenvalues = NULL;
+		eigenvectors = NULL;
 		reduced_Hessenberg = NULL;
 		reduced_Q = NULL;
 
@@ -50,8 +50,8 @@ public:
 
 	void Get_eigenvalues(string method, bool use_preliminary_reduction, string reduction_method = "Arnoldi");
 
-	void Print_eigenvalues() const;
-	void Print_eigenvectors() const;
+	void Print_eigenvalues() const {eigenvalues -> Print_matrix(); }
+	void Print_eigenvectors() const {eigenvectors -> Print_matrix(); }
 
 	~Eigenvalue() {
 		delete original_A;
@@ -80,21 +80,6 @@ void Eigenvalue::Get_eigenvalues(string method, bool use_preliminary_reduction, 
 	cout << "Successfully get eigenvalues!\n";
 }
 
-void Eigenvalue::Print_eigenvalues() const {
-	for (int i = 0; i < dimension; ++i) {
-		cout << eigenvalues -> matrix[i][0] << '\n';
-	}
-} 
-
-void Eigenvalue::Print_eigenvectors() const {
-	for (int i = 0; i < dimension; ++i) {
-		for (int j = 0; j < dimension; ++j) {
-			cout << setw(14) <<  eigenvectors -> matrix[i][j];
-		}
-		cout << '\n';
-	}
-}
-
 void Eigenvalue::QR_iteration(int iterations) {
 	Matrix Ak(dimension, dimension); 
 	Matrix eigenvectors_matrix(dimension, dimension);
@@ -108,16 +93,17 @@ void Eigenvalue::QR_iteration(int iterations) {
 		Ak = (* original_A);
 	} 
 
-	Matrix Q(dimension, dimension);
-	Matrix R(dimension, dimension);
+	Matrix Q(Ak);
+	Matrix R(Ak);
 
-	Matrix A_record(dimension, dimension);
-	A_record = Ak;
+	Matrix A_record(Ak);
+	int eigen_dimension = Ak.row_dimension;
+
 	// QR iteration starts.
 	for (int i = 0; i < iterations; ++i) {
 		if (i % 10 == 9) {
 			Ak.Matrix_approximation(1e-10); 
-			if ((A_record - Ak).Frobenius_norm() < 1e-8 * dimension) {
+			if ((A_record - Ak).Frobenius_norm() < 1e-5 * eigen_dimension) {
 				cout << "QR iterations:" << i << '\n';
 				break;
 			}
@@ -131,13 +117,18 @@ void Eigenvalue::QR_iteration(int iterations) {
 		eigenvectors_matrix = eigenvectors_matrix * Q;
 	}
 
-	for (int i = 0; i < dimension; i++) {
+	
+	eigenvalues = new Matrix(eigen_dimension, 1);
+	eigenvectors = new Matrix(dimension, eigen_dimension);
+
+	for (int i = 0; i < eigen_dimension; i++) {
 		eigenvalues -> matrix[i][0] = Ak.matrix[i][i];
 	}
 	*eigenvectors = eigenvectors_matrix;
 
 	eigenvalues -> Matrix_approximation();
 	eigenvectors -> Matrix_approximation();
+	Ak.Print_matrix();
 }
 
 void Eigenvalue::Preliminary_Reduction(string method) {
@@ -152,7 +143,8 @@ void Eigenvalue::Preliminary_Reduction(string method) {
 		Matrix H(dimension, dimension);
 
 		Q.Set_column(0, x0 * (1.0 / x0.Frobenius_norm()) );
-		for (int k = 0; k < dimension; k++) {
+		int k = 0;
+		for (k = 0; k < dimension; k++) {
 			Matrix uk(dimension, 1);
 			uk = (*original_A) * (Q.column_matrix(k));
 
@@ -166,15 +158,28 @@ void Eigenvalue::Preliminary_Reduction(string method) {
 			}
 			else {break; }
 
-			if (uk.Frobenius_norm() == 0) {break; }
+			if (uk.Frobenius_norm() < 1e-8) {break; }
 
 			Q.Set_column(k + 1, uk * (1.0 / H.matrix[k + 1][k]) );
 		}
 
-		reduced_Q = new Matrix(dimension, dimension);
-		reduced_Hessenberg = new Matrix(dimension, dimension);
-		*reduced_Q = Q;
-		*reduced_Hessenberg = H;
+		reduced_Q = new Matrix(dimension, k + 1);
+		reduced_Hessenberg = new Matrix(k + 1, k + 1);
+		for (int i = 0; i < dimension; ++i) {
+			for (int j = 0; j < k + 1; ++j) {
+				reduced_Q -> matrix[i][j] = Q.matrix[i][j];
+			}
+		}
+		for (int i = 0; i < k + 1; ++i) {
+			for (int j = 0; j < k + 1; ++j) {
+				reduced_Hessenberg -> matrix[i][j] = H.matrix[i][j];
+			}
+		}
+
+		// Q.Print_matrix();
+		// cout << '\n';
+		// H.Print_matrix();
+
 	}
 	else if (method == "Lanczos") {
 		preliminary_reduction = true;

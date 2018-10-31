@@ -25,7 +25,7 @@ int main() {
 
     Matrix initial_solution(n, 1);
     for (int i = 0; i < n; i++) {
-        initial_solution.Set_Element(i, 0, 1);
+        initial_solution.matrix[i][0] = 1;
     }
 
     for (int i = 0; i < m; i++) { // Set b

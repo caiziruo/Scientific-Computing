@@ -85,12 +85,9 @@ public:
         factorization_R = NULL;
     }
     
-    void Set_element(int i, int j, double x) {matrix[i][j] = x;}
     void Set_column(int j, Matrix const & B);
     void Set_row(int i, Matrix const & B);
     // double Matrix_element(int i, int j) const {return matrix[i][j]; }
-    // int Matrix_row_dimension() const {return row_dimension;}
-    // int Matrix_column_dimension() const {return column_dimension;}
     
     void Interchange_row(int m, int n);
     

@@ -101,7 +101,7 @@ void Eigenvalue::QR_iteration(int iterations) {
 
 	// QR iteration starts.
 	for (int i = 0; i < iterations; ++i) {
-		if (i % 10 == 9) {
+		if (i % 5 == 4) {
 			Ak.Matrix_approximation(1e-10); 
 			if ((A_record - Ak).Frobenius_norm() < 1e-5 * eigen_dimension) {
 				cout << "QR iterations:" << i << '\n';
@@ -128,7 +128,7 @@ void Eigenvalue::QR_iteration(int iterations) {
 
 	eigenvalues -> Matrix_approximation();
 	eigenvectors -> Matrix_approximation();
-	Ak.Print_matrix();
+	// Ak.Print_matrix();
 }
 
 void Eigenvalue::Preliminary_Reduction(string method) {
@@ -175,14 +175,58 @@ void Eigenvalue::Preliminary_Reduction(string method) {
 				reduced_Hessenberg -> matrix[i][j] = H.matrix[i][j];
 			}
 		}
-
-		// Q.Print_matrix();
-		// cout << '\n';
-		// H.Print_matrix();
-
 	}
 	else if (method == "Lanczos") {
 		preliminary_reduction = true;
+
+
+		Matrix x0(dimension, 1); // x0 is an arbitrary nonzero starting vector.
+		x0.Generate_Identity();
+		// x0.Generate_Random();
+
+		Matrix Q(dimension, dimension);
+		Matrix H(dimension, dimension);
+
+		Q.Set_column(0, x0 * (1.0 / x0.Frobenius_norm()) );
+
+		int k = 0;
+		Matrix uk(dimension, 1);
+
+		uk = (*original_A) * (Q.column_matrix(k));
+		H.matrix[k][k] = (Q.column_matrix(k).Transpose() * uk).matrix[0][0];
+		uk = uk - Q.column_matrix(k) * H.matrix[k][k];
+		H.matrix[k + 1][k] = uk.Frobenius_norm();
+		Q.Set_column(k + 1, uk * (1.0 / H.matrix[k + 1][k]) );
+
+		for (k = 1; k < dimension; k++) {
+			uk = (*original_A) * (Q.column_matrix(k));
+			H.matrix[k][k] = (Q.column_matrix(k).Transpose() * uk).matrix[0][0];
+			H.matrix[k - 1][k] = H.matrix[k][k - 1];
+			uk = uk - Q.column_matrix(k) * H.matrix[k][k] - Q.column_matrix(k - 1) * H.matrix[k - 1][k];
+
+			if (k < dimension - 1) {
+				H.matrix[k + 1][k] = uk.Frobenius_norm(); 
+			}
+			else {break; }
+
+			if (uk.Frobenius_norm() < 1e-8) {break; }
+
+			Q.Set_column(k + 1, uk * (1.0 / H.matrix[k + 1][k]) );
+		}
+
+		reduced_Q = new Matrix(dimension, k + 1);
+		reduced_Hessenberg = new Matrix(k + 1, k + 1);
+		for (int i = 0; i < dimension; ++i) {
+			for (int j = 0; j < k + 1; ++j) {
+				reduced_Q -> matrix[i][j] = Q.matrix[i][j];
+			}
+		}
+		for (int i = 0; i < k + 1; ++i) {
+			for (int j = 0; j < k + 1; ++j) {
+				reduced_Hessenberg -> matrix[i][j] = H.matrix[i][j];
+			}
+		}
+
 	}
 }
 

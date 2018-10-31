@@ -26,18 +26,25 @@ int main() {
     Eigenvalue eigenvalues_computation(A);
 
     eigenvalues_computation.Get_eigenvalues("QR_iteration", false);
-    cout << "Eigenvalues:\n";
-    eigenvalues_computation.Print_eigenvalues();
-    cout << "\nEigenvectors:\n";
-    eigenvalues_computation.Print_eigenvectors();
-    cout << '\n';
+    // cout << "Eigenvalues:\n";
+    // eigenvalues_computation.Print_eigenvalues();
+    // cout << "\nEigenvectors:\n";
+    // eigenvalues_computation.Print_eigenvectors();
+    // cout << '\n';
 
     eigenvalues_computation.Get_eigenvalues("QR_iteration", true, "Arnoldi");
 
+    // cout << "Eigenvalues:\n";
+    // eigenvalues_computation.Print_eigenvalues();
+    // cout << "\nEigenvectors:\n";
+    // eigenvalues_computation.Print_eigenvectors();
+    // cout << '\n';
+
+    eigenvalues_computation.Get_eigenvalues("QR_iteration", true, "Lanczos");
+
     cout << "Eigenvalues:\n";
     eigenvalues_computation.Print_eigenvalues();
     cout << "\nEigenvectors:\n";
     eigenvalues_computation.Print_eigenvectors();
     cout << '\n';
-
 }

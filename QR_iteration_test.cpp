@@ -14,18 +14,19 @@ using namespace std;
 
 int main() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    int n = 9;
+    int n = 5;
     Matrix A(n, n);
     // A.Generate_Nonsingular();
     A.Generate_Positive_Definite();
     // A.Generate_Diagonally_Dominant();
 
-    // A.Print_matrix();
-    // cout << '\n'; 
+    cout << "Original matrix:\n";
+    A.Print_matrix();
+    cout << '\n'; 
 
     Eigenvalue eigenvalues_computation(A);
 
-    eigenvalues_computation.Get_eigenvalues("QR_iteration", false);
+    // eigenvalues_computation.Get_eigenvalues("QR_iteration", false);
     // cout << "Eigenvalues:\n";
     // eigenvalues_computation.Print_eigenvalues();
     // cout << "\nEigenvectors:\n";
@@ -33,16 +34,18 @@ int main() {
     // cout << '\n';
 
     eigenvalues_computation.Get_eigenvalues("QR_iteration", true, "Arnoldi");
+    // eigenvalues_computation.Print_reduced_matrix();
 
-    // cout << "Eigenvalues:\n";
+    // cout << "\nEigenvalues:\n";
     // eigenvalues_computation.Print_eigenvalues();
     // cout << "\nEigenvectors:\n";
     // eigenvalues_computation.Print_eigenvectors();
     // cout << '\n';
 
     eigenvalues_computation.Get_eigenvalues("QR_iteration", true, "Lanczos");
+    eigenvalues_computation.Print_reduced_matrix();
 
-    cout << "Eigenvalues:\n";
+    cout << "\nEigenvalues:\n";
     eigenvalues_computation.Print_eigenvalues();
     cout << "\nEigenvectors:\n";
     eigenvalues_computation.Print_eigenvectors();

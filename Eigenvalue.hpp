@@ -49,7 +49,11 @@ public:
 	}
 
 	void Get_eigenvalues(string method, bool use_preliminary_reduction, string reduction_method = "Arnoldi");
-
+	void Print_reduced_matrix() const {
+		reduced_Q -> Print_matrix();
+		cout << '\n';
+		reduced_Hessenberg -> Print_matrix();
+	}
 	void Print_eigenvalues() const {eigenvalues -> Print_matrix(); }
 	void Print_eigenvectors() const {eigenvectors -> Print_matrix(); }
 
@@ -136,8 +140,8 @@ void Eigenvalue::Preliminary_Reduction(string method) {
 		preliminary_reduction = true;
 
 		Matrix x0(dimension, 1); // x0 is an arbitrary nonzero starting vector.
-		x0.Generate_Identity();
-		// x0.Generate_Random();
+		// x0.Generate_Identity();
+		x0.Generate_Random();
 
 		Matrix Q(dimension, dimension);
 		Matrix H(dimension, dimension);
@@ -181,8 +185,8 @@ void Eigenvalue::Preliminary_Reduction(string method) {
 
 
 		Matrix x0(dimension, 1); // x0 is an arbitrary nonzero starting vector.
-		x0.Generate_Identity();
-		// x0.Generate_Random();
+		// x0.Generate_Identity();
+		x0.Generate_Random();
 
 		Matrix Q(dimension, dimension);
 		Matrix H(dimension, dimension);
@@ -226,8 +230,10 @@ void Eigenvalue::Preliminary_Reduction(string method) {
 				reduced_Hessenberg -> matrix[i][j] = H.matrix[i][j];
 			}
 		}
-
 	}
+
+	reduced_Q -> Matrix_approximation();
+	reduced_Hessenberg -> Matrix_approximation();
 }
 
 #endif

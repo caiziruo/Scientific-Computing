@@ -93,6 +93,7 @@ public:
     
     void Matrix_approximation(double epsilon);
     void Generate_Identity();
+    void Generate_Zero();
     void Generate_Random();
     void Generate_Nonsingular();
     void Generate_Positive_Definite();
@@ -108,9 +109,12 @@ public:
     void LU_factorization(bool use_pivoting = true);
     void QR_factorization(bool use_pivoting = true);
     Matrix Transpose() const;
+    Matrix Inverse();
+    Matrix Opposite() const;
     Matrix column_matrix(int j);
     Matrix row_matrix(int i);
-    Matrix inverse_upper_triangular(); 
+    Matrix inverse_upper_triangular() const;
+    Matrix inverse_lower_triangular() const;
     Matrix LU_factorization_L();
     Matrix LU_factorization_U();
     Matrix QR_factorization_Q();
@@ -166,7 +170,7 @@ public:
     }
     
     Matrix & operator=(const Matrix & B) {
-        if (this == & B) return * this;// = itself
+        if (this == & B) return * this; // = itself
         
         for (int i = 0; i < row_dimension; i++) {
             delete [] matrix[i];
@@ -205,6 +209,28 @@ Matrix Matrix::Transpose() const {
         }
     }
     
+    return tmp;
+}
+
+Matrix Matrix::Inverse() {
+    Matrix tmp(row_dimension, column_dimension);
+
+    LU_factorization();
+
+    tmp = (LU_factorization_U().inverse_upper_triangular()) * (LU_factorization_L().inverse_lower_triangular());
+
+    return tmp;
+} 
+
+Matrix Matrix::Opposite() const {
+    Matrix tmp(row_dimension, column_dimension);
+
+    for (int i = 0; i < row_dimension; i++) {
+        for (int j = 0; j < column_dimension; j++) {
+            tmp.matrix[i][j] = -matrix[i][j];
+        }
+    }
+
     return tmp;
 }
 
@@ -297,6 +323,14 @@ void Matrix::Generate_Identity() {
     }
 }
 
+void Matrix::Generate_Zero() {
+    for (int i = 0; i < row_dimension; i++) {
+        for (int j = 0; j < column_dimension; j++) {
+            matrix[i][j] = 0;
+        }
+    }
+}
+
 void Matrix::Generate_Random() {
     for (int i = 0; i < row_dimension; i++) {
         for (int j = 0; j < column_dimension; j++) {
@@ -355,7 +389,7 @@ Matrix Matrix::row_matrix(int i) {
     return tmp;
 }
 
-Matrix Matrix::inverse_upper_triangular() {
+Matrix Matrix::inverse_upper_triangular() const {
     Matrix tmp(column_dimension, column_dimension);
     tmp.Generate_Identity();
 
@@ -369,6 +403,27 @@ Matrix Matrix::inverse_upper_triangular() {
     }
     for (int i = 0; i < column_dimension; i++) {
         for (int j = i; j < column_dimension; ++j) {
+            tmp.matrix[i][j] = tmp.matrix[i][j] / matrix[i][i];
+        }
+    }
+
+    return tmp;
+}
+
+Matrix Matrix::inverse_lower_triangular() const {
+    Matrix tmp(column_dimension, column_dimension);
+    tmp.Generate_Identity();
+
+    for (int i = 1; i < column_dimension; i++) {
+        for (int j = 0; j < i; j++) {
+            double aj = matrix[i][j] / matrix[j][j];
+            for (int k = 0; k <= j ; k++) {
+                tmp.matrix[i][k] -= aj * tmp.matrix[j][k];
+            }
+        }
+    }
+    for (int i = 0; i < column_dimension; i++) {
+        for (int j = 0; j <= i; ++j) {
             tmp.matrix[i][j] = tmp.matrix[i][j] / matrix[i][i];
         }
     }
@@ -452,45 +507,45 @@ void Matrix::LU_factorization(bool use_pivoting) {
     
     // compute the factorization of A.
     for (int i = 0; i < column_dimension - 1; i++) {
-        if (use_pivoting) {
-            int biggest_pivot_index = i;
-            double biggest_pivot = abs(matrix[i][i]);
+        // if (use_pivoting) {
+        //     int biggest_pivot_index = i;
+        //     double biggest_pivot = abs(matrix[i][i]);
             
-            for (int j = i + 1; j < row_dimension; j++) {
-                if (abs(matrix[j][i]) > biggest_pivot) {
-                    biggest_pivot_index = j;
-                    biggest_pivot = abs(matrix[j][i]);
-                }
-            }
+        //     for (int j = i + 1; j < row_dimension; j++) {
+        //         if (abs(matrix[j][i]) > biggest_pivot) {
+        //             biggest_pivot_index = j;
+        //             biggest_pivot = abs(matrix[j][i]);
+        //         }
+        //     }
             
-            if (biggest_pivot_index != i) { // record which two rows are interchanged.
-                permutation_index.push_back(i);
-                permutation_index.push_back(biggest_pivot_index);
-            }
+        //     if (biggest_pivot_index != i) { // record which two rows are interchanged.
+        //         permutation_index.push_back(i);
+        //         permutation_index.push_back(biggest_pivot_index);
+        //     }
             
-            double tmp;  // interchange i, biggest_pivot_index-th row of U
-            for (int k = i; k < column_dimension; k++) {
-                tmp = factorization_U[biggest_pivot_index][k];
-                factorization_U[biggest_pivot_index][k] = factorization_U[i][k];
-                factorization_U[i][k] = tmp;
-            }
-        }
-        else if (factorization_U[i][i] == 0) {
-            int j = i;
-            for (j = i; j < row_dimension; j++) {   //find the first nonzero pivot
-                if (matrix[j][i] != 0) {break;}
-            }
+        //     double tmp;  // interchange i, biggest_pivot_index-th row of U
+        //     for (int k = i; k < column_dimension; k++) {
+        //         tmp = factorization_U[biggest_pivot_index][k];
+        //         factorization_U[biggest_pivot_index][k] = factorization_U[i][k];
+        //         factorization_U[i][k] = tmp;
+        //     }
+        // }
+        // else if (factorization_U[i][i] == 0) {
+        //     int j = i;
+        //     for (j = i; j < row_dimension; j++) {   //find the first nonzero pivot
+        //         if (matrix[j][i] != 0) {break;}
+        //     }
             
-            permutation_index.push_back(i);
-            permutation_index.push_back(j);
+        //     permutation_index.push_back(i);
+        //     permutation_index.push_back(j);
             
-            double tmp;  // interchange i, j-th row of U
-            for (int k = i; k < column_dimension; k++) {
-                tmp = factorization_U[j][k];
-                factorization_U[j][k] = factorization_U[i][k];
-                factorization_U[i][k] = tmp;
-            }
-        }
+        //     double tmp;  // interchange i, j-th row of U
+        //     for (int k = i; k < column_dimension; k++) {
+        //         tmp = factorization_U[j][k];
+        //         factorization_U[j][k] = factorization_U[i][k];
+        //         factorization_U[i][k] = tmp;
+        //     }
+        // }
         
         //////////////////////     Elimination
         for (int l = i + 1; l < row_dimension; l++) {

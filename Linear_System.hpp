@@ -403,7 +403,6 @@ Matrix Linear_system::Vector_b() const {
     return tmp;
 }
 
-
 Matrix Linear_system::Solution_Matrix() const {
     Matrix tmp(row_dimension, 1);
     

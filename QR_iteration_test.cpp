@@ -43,7 +43,7 @@ int main() {
     // cout << '\n';
 
     eigenvalues_computation.Get_eigenvalues("QR_iteration", true, "Lanczos");
-    eigenvalues_computation.Print_reduced_matrix();
+    // eigenvalues_computation.Print_reduced_matrix();
 
     cout << "\nEigenvalues:\n";
     eigenvalues_computation.Print_eigenvalues();

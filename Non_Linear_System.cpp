@@ -14,6 +14,7 @@ using namespace std;
 
 #include "Matrix.hpp"
 
+// function_f is defined by user.
 Matrix function_f(Matrix x) {
 	int m = 2;
 	Matrix f(m, 1);
@@ -27,6 +28,7 @@ Matrix function_f(Matrix x) {
 	return f;
 }
 
+// Jacobian_matrix is defined by user.
 Matrix Jacobian_matrix(Matrix x) {
 	int m = 2;
 	Matrix J(m, x.row_dimension);

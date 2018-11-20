@@ -1,6 +1,6 @@
 # Scientific Computing
 
-Assignments for scientific computing (c++).
+Assignments for scientific computing (C++).
 
 See [this](http://heath.cs.illinois.edu/scicomp/notes/) for Lecture notes.
 

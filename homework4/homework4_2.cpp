@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#include "Matrix.hpp"
+#include "../Matrix.hpp"
 
 Matrix function_f(Matrix x) {
 	int m = 2;

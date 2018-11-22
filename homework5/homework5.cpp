@@ -8,8 +8,8 @@
 
 using namespace std;
 
-#include "Matrix.hpp"
-#include "Conjugate_Gradient.hpp"
+#include "../Matrix.hpp"
+#include "../Conjugate_Gradient.hpp"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main() {

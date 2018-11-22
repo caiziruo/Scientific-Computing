@@ -8,8 +8,8 @@
 
 using namespace std;
 
-#include "Matrix.hpp"
-#include "Linear_System.hpp"
+#include "../Matrix.hpp"
+#include "../Linear_System.hpp"
 
 
 int main() {

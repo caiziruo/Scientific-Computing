@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#include "Matrix.hpp"
+#include "../Matrix.hpp"
 
 
 int main() {

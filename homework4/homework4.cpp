@@ -8,8 +8,8 @@
 
 using namespace std;
 
-#include "Matrix.hpp"
-#include "Eigenvalue.hpp"
+#include "../Matrix.hpp"
+#include "../Eigenvalue.hpp"
 
 
 int main() {
